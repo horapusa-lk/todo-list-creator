@@ -96,6 +96,10 @@ body.light-theme {
   --input-bg:         rgba(255, 255, 255, 0.85);
   --input-border:     rgba(128, 0, 0, 0.18);
   --option-bg:        #fff;
+  /* Override accent text colors so they appear dark on the light background */
+  --clr-primary-light: var(--ucsc-maroon);
+  --clr-accent:        var(--ucsc-maroon-dark);
+  --clr-accent-warm:   #800000;
 }
 
 /* In light mode the navbar text stays white (maroon bg) */
@@ -106,6 +110,24 @@ body.light-theme .theme-toggle__label,
 body.light-theme .nav-link { color: rgba(255,255,255,0.90) !important; -webkit-text-fill-color: unset; }
 body.light-theme .nav-link:hover { color: var(--ucsc-gold) !important; }
 body.light-theme .nav-link.active { color: var(--ucsc-gold) !important; }
+
+/* In light mode, sidebar elements hovered need maroon accents instead of gold */
+body.light-theme .btn-icon:hover {
+  background: rgba(128, 0, 0, 0.08);
+  border-color: var(--ucsc-maroon);
+  color: var(--ucsc-maroon);
+}
+body.light-theme .event-item:hover {
+  border-color: var(--ucsc-maroon);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.12), inset 0 0 10px rgba(128, 0, 0, 0.05);
+}
+
+body.light-theme .section-header__title {
+  background: linear-gradient(135deg, var(--text-primary) 30%, var(--ucsc-maroon-light) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 /* ─── 2. RESET & BASE ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -385,7 +407,7 @@ body.light-theme .theme-toggle__track {
   height: 20px;
   border-radius: 50%;
   background: linear-gradient(135deg, #a78bfa, #67e8f9);
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 2px 8px rgba(128, 0, 0, 0.5);
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s ease, box-shadow 0.3s ease;
   display: flex;
   align-items: center;
@@ -695,7 +717,7 @@ body.light-theme .theme-toggle__thumb::after {
   padding: 0.9rem 1.5rem;
   text-align: center;
   min-width: 130px;
-  border: 1px solid rgba(124, 58, 237, 0.35);
+  border: 1px solid rgba(128, 0, 0, 0.35);
 }
 
 .gpa-badge__label {
@@ -826,8 +848,8 @@ body.light-theme .theme-toggle__thumb::after {
 
 .table-input:focus {
   border-color: var(--clr-primary);
-  background: rgba(124, 58, 237, 0.1);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: rgba(128, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.15);
 }
 
 
@@ -998,10 +1020,10 @@ option { background: var(--option-bg); color: var(--text-primary); }
 }
 
 .mode-btn.active {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(6, 182, 212, 0.2));
-  border-color: rgba(124, 58, 237, 0.5);
+  background: linear-gradient(135deg, rgba(128, 0, 0, 0.35), rgba(6, 182, 212, 0.2));
+  border-color: rgba(128, 0, 0, 0.5);
   color: var(--clr-primary-light);
-  box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 20px rgba(128, 0, 0, 0.2);
 }
 
 /* Custom Duration */
@@ -1026,7 +1048,7 @@ option { background: var(--option-bg); color: var(--text-primary); }
   padding: 2.5rem 2rem;
   margin-bottom: 1.5rem;
   gap: 2rem;
-  border: 1px solid rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(128, 0, 0, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -1067,7 +1089,7 @@ option { background: var(--option-bg); color: var(--text-primary); }
   stroke-dasharray: 597;
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 1s linear, stroke var(--transition-slow);
-  filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.6));
+  filter: drop-shadow(0 0 8px rgba(128, 0, 0, 0.6));
 }
 
 .timer-display {
@@ -1116,12 +1138,12 @@ option { background: var(--option-bg); color: var(--text-primary); }
   width: 70px; height: 70px;
   background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
   color: white;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 4px 20px rgba(128, 0, 0, 0.5);
 }
 
 .btn-timer--main:hover {
   transform: scale(1.08);
-  box-shadow: 0 6px 28px rgba(124, 58, 237, 0.7);
+  box-shadow: 0 6px 28px rgba(128, 0, 0, 0.7);
 }
 
 .btn-timer--main:active { transform: scale(0.96); }
@@ -1266,8 +1288,8 @@ option { background: var(--option-bg); color: var(--text-primary); }
 
 .form-input:focus {
   border-color: var(--clr-primary);
-  background: rgba(124, 58, 237, 0.1);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: rgba(128, 0, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.15);
 }
 
 
@@ -1298,12 +1320,12 @@ option { background: var(--option-bg); color: var(--text-primary); }
   background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
   color: white;
   border-color: transparent;
-  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 2px 12px rgba(128, 0, 0, 0.35);
 }
 
 .btn--primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.55);
+  box-shadow: 0 4px 20px rgba(128, 0, 0, 0.55);
   filter: brightness(1.1);
 }
 
@@ -1333,7 +1355,7 @@ option { background: var(--option-bg); color: var(--text-primary); }
   right: 2rem;
   padding: 0.85rem 1.5rem;
   border-radius: var(--radius-md);
-  background: rgba(30, 10, 60, 0.92);
+  background: rgba(40, 0, 0, 0.92);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   color: var(--text-primary);
@@ -1355,15 +1377,15 @@ option { background: var(--option-bg); color: var(--text-primary); }
 
 .toast--success { border-color: rgba(16, 185, 129, 0.5); }
 .toast--error   { border-color: rgba(239, 68, 68, 0.5); }
-.toast--info    { border-color: rgba(124, 58, 237, 0.5); }
+.toast--info    { border-color: rgba(128, 0, 0, 0.5); }
 
 /* ─── 19. TABLE CARD SPACING ─── */
 .table-card { margin-bottom: 1.5rem; }
 
 /* ─── 20. PULSING ANIMATION (timer running) ─── */
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5); }
-  50%       { box-shadow: 0 4px 40px rgba(124, 58, 237, 0.85); }
+  0%, 100% { box-shadow: 0 4px 20px rgba(128, 0, 0, 0.5); }
+  50%       { box-shadow: 0 4px 40px rgba(128, 0, 0, 0.85); }
 }
 
 .btn-timer--main.running { animation: pulse 2s ease-in-out infinite; }

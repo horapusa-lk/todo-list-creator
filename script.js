@@ -316,10 +316,10 @@ function updateGpaSummary() {
 
 /** Get a color based on GPA value */
 function gpaColor(gpa) {
-  if (gpa >= 3.7) return '#6ee7b7'; // green
-  if (gpa >= 3.0) return '#7c3aed'; // purple
-  if (gpa >= 2.0) return '#fcd34d'; // yellow
-  return '#fca5a5';                  // red
+  if (gpa >= 3.7) return 'var(--clr-success)';
+  if (gpa >= 3.0) return 'var(--clr-primary-light)';
+  if (gpa >= 2.0) return 'var(--clr-warn)';
+  return 'var(--clr-danger)';
 }
 
 /** Add a new blank row */
@@ -392,7 +392,7 @@ calculateBtn.addEventListener('click', () => {
   // Pulse the GPA badge
   const badge = document.getElementById('gpaBadge');
   badge.style.transform = 'scale(1.06)';
-  badge.style.boxShadow = '0 0 30px rgba(124,58,237,0.5)';
+  badge.style.boxShadow = '0 0 30px var(--clr-primary-light)';
   setTimeout(() => {
     badge.style.transform = '';
     badge.style.boxShadow = '';

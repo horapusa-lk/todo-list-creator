@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UCSC Student Toolkit — GPA Calculator &amp; Study Timer</title>
+  <meta name="description" content="University of Colombo School of Computing (UCSC) Student Toolkit — weighted GPA calculator, Pomodoro study timer, and upcoming events planner." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ═══════════════════════════════ NAVBAR ═══════════════════════════════ -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar__brand">
+      <!-- UCSC Logo -->
+      <img
+        src="ucsc-logo.png"
+        alt="University of Colombo School of Computing"
+        class="navbar__ucsc-logo"
+        width="36" height="36"
+      />
+      <div class="navbar__brand-text">
+        <span class="navbar__title">Student Toolkit</span>
+        <span class="navbar__subtitle">UCSC &mdash; University of Colombo</span>
+      </div>
+    </div>
+
+    <!-- Hamburger toggle (mobile) -->
+    <button class="navbar__hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="navbar__links" id="navLinks" role="list">
+      <li>
+        <button class="nav-link active" id="navGpa" role="tab" aria-selected="true" aria-controls="section-gpa">
+          <span class="nav-link__icon" aria-hidden="true">📊</span>
+          GPA Calculator
+        </button>
+      </li>
+      <li>
+        <button class="nav-link" id="navTimer" role="tab" aria-selected="false" aria-controls="section-timer">
+          <span class="nav-link__icon" aria-hidden="true">⏱️</span>
+          Study Timer
+        </button>
+      </li>
+    </ul>
+
+    <!-- Dark / Light Mode Toggle -->
+    <div class="theme-toggle" title="Toggle light / dark mode">
+      <span class="theme-toggle__label" id="themeLabel" aria-hidden="true">Dark</span>
+      <label class="theme-toggle__track" for="themeCheckbox" aria-label="Toggle dark/light mode">
+        <input type="checkbox" class="theme-toggle__checkbox" id="themeCheckbox" role="switch" aria-checked="false" />
+        <span class="theme-toggle__thumb"></span>
+      </label>
+    </div>
+
+    <div class="navbar__date" id="currentDate" aria-live="polite"></div>
+  </nav>
+
+  <!-- ═══════════════════════════════ LAYOUT ═══════════════════════════════ -->
+  <div class="layout-wrapper">
+
+    <!-- ─────────────── SIDEBAR ─────────────── -->
+    <aside class="sidebar" aria-label="Upcoming events sidebar">
+      <div class="sidebar__header">
+        <h2 class="sidebar__title">
+          <span aria-hidden="true">📅</span> Upcoming Events
+        </h2>
+        <button class="btn-icon" id="addEventBtn" title="Add new event" aria-label="Add new event">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3V15M3 9H15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Add Event Form (hidden by default) -->
+      <div class="event-form glass-card" id="eventForm" style="display:none;" role="form" aria-label="Add event form">
+        <input type="text" id="eventTitle" class="form-input" placeholder="Event title…" maxlength="50" />
+        <input type="text" id="eventDate" class="form-input" placeholder="Date (YYYY-MM-DD)" maxlength="10" />
+        <input type="text" id="eventType" class="form-input" placeholder="Type: exam / assignment / deadline / class" maxlength="30" />
+        <div class="event-form__actions">
+          <button class="btn btn--sm btn--primary" id="saveEventBtn">Save</button>
+          <button class="btn btn--sm btn--ghost" id="cancelEventBtn">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Events List -->
+      <ul class="events-list" id="eventsList" role="list" aria-label="Upcoming events list">
+        <!-- Dynamically populated -->
+      </ul>
+
+      <!-- Sidebar Stats -->
+      <div class="sidebar__stats">
+        <div class="stat-card">
+          <span class="stat-card__number" id="totalEvents">0</span>
+          <span class="stat-card__label">Events</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__number" id="upcomingCount">0</span>
+          <span class="stat-card__label">This Week</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ═══ GPA CALCULATOR SECTION ═══ -->
+      <section id="section-gpa" class="content-section active" role="tabpanel" aria-labelledby="navGpa">
+        <div class="section-header">
+          <div>
+            <h1 class="section-header__title">GPA Calculator</h1>
+            <p class="section-header__subtitle">Track your grades and compute your weighted GPA on a 4.0 scale</p>
+          </div>
+          <div class="gpa-badge glass-card" id="gpaBadge" aria-live="polite" aria-label="Current GPA">
+            <span class="gpa-badge__label">Current GPA</span>
+            <span class="gpa-badge__value" id="gpaDisplay">—</span>
+            <span class="gpa-badge__scale">/ 4.0</span>
+          </div>
+        </div>
+
+        <!-- GPA Table -->
+        <div class="glass-card table-card">
+          <div class="table-card__header">
+            <h3>Courses</h3>
+            <button class="btn btn--sm btn--primary" id="addRowBtn" aria-label="Add a new course row">
+              <span aria-hidden="true">+</span> Add Course
+            </button>
+          </div>
+
+          <div class="table-wrapper" role="region" aria-label="Courses table">
+            <table class="gpa-table" id="gpaTable">
+              <thead>
+                <tr>
+                  <th scope="col">Subject Name</th>
+                  <th scope="col">Grade</th>
+                  <th scope="col">Credit Hours</th>
+                  <th scope="col">Grade Points</th>
+                  <th scope="col" class="col-action">Remove</th>
+                </tr>
+              </thead>
+              <tbody id="gpaTableBody">
+                <!-- Rows inserted by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-card__footer">
+            <div class="gpa-summary" id="gpaSummary" aria-live="polite">
+              <div class="summary-item">
+                <span class="summary-item__label">Total Credits</span>
+                <span class="summary-item__value" id="totalCredits">0</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-item__label">Quality Points</span>
+                <span class="summary-item__value" id="qualityPoints">0.00</span>
+              </div>
+              <div class="summary-item highlight">
+                <span class="summary-item__label">GPA</span>
+                <span class="summary-item__value" id="gpaResult">—</span>
+              </div>
+            </div>
+            <div class="table-card__actions">
+              <button class="btn btn--ghost" id="clearAllBtn">Clear All</button>
+              <button class="btn btn--primary" id="calculateBtn">Calculate GPA</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GPA Scale Reference -->
+        <div class="glass-card scale-card">
+          <h3 class="scale-card__title">Grade Scale Reference</h3>
+          <div class="scale-grid" role="table" aria-label="Grade scale reference table">
+            <div class="scale-row scale-row--header" role="row">
+              <span role="columnheader">Grade</span>
+              <span role="columnheader">Points</span>
+              <span role="columnheader">Range</span>
+            </div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-a">A+</span><span role="cell">4.0</span><span role="cell">97–100%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-a">A</span><span role="cell">4.0</span><span role="cell">93–96%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-a">A−</span><span role="cell">3.7</span><span role="cell">90–92%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-b">B+</span><span role="cell">3.3</span><span role="cell">87–89%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-b">B</span><span role="cell">3.0</span><span role="cell">83–86%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-b">B−</span><span role="cell">2.7</span><span role="cell">80–82%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-c">C+</span><span role="cell">2.3</span><span role="cell">77–79%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-c">C</span><span role="cell">2.0</span><span role="cell">73–76%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-c">C−</span><span role="cell">1.7</span><span role="cell">70–72%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-d">D</span><span role="cell">1.0</span><span role="cell">60–69%</span></div>
+            <div class="scale-row" role="row"><span role="cell" class="grade-pill grade-f">F</span><span role="cell">0.0</span><span role="cell">Below 60%</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ STUDY TIMER SECTION ═══ -->
+      <section id="section-timer" class="content-section" role="tabpanel" aria-labelledby="navTimer" style="display:none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-header__title">Study Timer</h1>
+            <p class="section-header__subtitle">Pomodoro technique — stay focused with timed study sessions</p>
+          </div>
+          <div class="session-badge glass-card" aria-live="polite">
+            <span class="session-badge__label">Sessions Today</span>
+            <span class="session-badge__value" id="sessionsToday">0</span>
+          </div>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div class="timer-modes glass-card" role="tablist" aria-label="Timer mode selection">
+          <button class="mode-btn active" id="modePomodoro" role="tab" aria-selected="true" data-mode="pomodoro" data-minutes="25">
+            🍅 Pomodoro<br/><small>25 min</small>
+          </button>
+          <button class="mode-btn" id="modeShortBreak" role="tab" aria-selected="false" data-mode="short" data-minutes="5">
+            ☕ Short Break<br/><small>5 min</small>
+          </button>
+          <button class="mode-btn" id="modeLongBreak" role="tab" aria-selected="false" data-mode="long" data-minutes="15">
+            🌿 Long Break<br/><small>15 min</small>
+          </button>
+          <button class="mode-btn" id="modeCustom" role="tab" aria-selected="false" data-mode="custom" data-minutes="0">
+            ⚙️ Custom<br/><small>set time</small>
+          </button>
+        </div>
+
+        <!-- Custom Duration Input -->
+        <div class="custom-duration glass-card" id="customDurationCard" style="display:none;">
+          <label for="customMinutes" class="form-label">Custom duration (minutes):</label>
+          <div class="custom-duration__row">
+            <input type="text" id="customMinutes" class="form-input" value="30" placeholder="Minutes (1–120)" style="max-width:120px;" maxlength="3" />
+            <button class="btn btn--primary btn--sm" id="setCustomBtn">Set Timer</button>
+          </div>
+        </div>
+
+        <!-- Timer Display -->
+        <div class="timer-container glass-card">
+          <div class="timer-ring-wrapper" role="presentation">
+            <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#7c3aed"/>
+                  <stop offset="100%" stop-color="#06b6d4"/>
+                </linearGradient>
+              </defs>
+              <circle class="timer-ring__track" cx="110" cy="110" r="95" />
+              <circle class="timer-ring__progress" id="ringProgress" cx="110" cy="110" r="95" />
+            </svg>
+            <div class="timer-display" aria-live="polite" aria-atomic="true" aria-label="Timer display">
+              <div class="timer-display__time" id="timerDisplay">25:00</div>
+              <div class="timer-display__mode" id="timerModeName">Focus Time</div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="timer-controls" role="group" aria-label="Timer controls">
+            <button class="btn-timer btn-timer--reset" id="resetBtn" aria-label="Reset timer">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 1 0 1.5-4M4 6V2l-2 4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="btn-timer btn-timer--main" id="startPauseBtn" aria-label="Start timer">
+              <svg id="playIcon" width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M8 6L22 14L8 22V6Z" fill="currentColor"/></svg>
+              <svg id="pauseIcon" width="28" height="28" viewBox="0 0 28 28" fill="none" style="display:none;"><rect x="7" y="5" width="5" height="18" rx="2" fill="currentColor"/><rect x="16" y="5" width="5" height="18" rx="2" fill="currentColor"/></svg>
+            </button>
+            <button class="btn-timer btn-timer--skip" id="skipBtn" aria-label="Skip to next session">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 15V5l10 5-10 5Z" fill="currentColor"/><rect x="15" y="5" width="2" height="10" rx="1" fill="currentColor"/></svg>
+            </button>
+          </div>
+
+          <!-- Progress Bar (mobile-friendly alt) -->
+          <div class="timer-progress-bar" role="presentation">
+            <div class="timer-progress-bar__fill" id="progressBarFill"></div>
+          </div>
+        </div>
+
+        <!-- Session Log -->
+        <div class="glass-card session-log">
+          <div class="session-log__header">
+            <h3>Session Log</h3>
+            <button class="btn btn--sm btn--ghost" id="clearLogBtn">Clear</button>
+          </div>
+          <ul class="session-log__list" id="sessionLog" role="list" aria-label="Study session log">
+            <li class="session-log__empty">No sessions recorded yet. Start your first Pomodoro!</li>
+          </ul>
+        </div>
+
+        <!-- Tips -->
+        <div class="glass-card tips-card">
+          <h3>💡 Pomodoro Tips</h3>
+          <ul class="tips-list" role="list">
+            <li>Work intensely for 25 minutes — no distractions</li>
+            <li>Take a 5-minute break after each session</li>
+            <li>Every 4 Pomodoros, take a longer 15–30 min break</li>
+            <li>Break complex tasks into smaller, timed chunks</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+    <!-- end main-content -->
+
+  </div>
+  <!-- end layout-wrapper -->
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
